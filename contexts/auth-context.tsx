@@ -1,14 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
-import { LOGIN_URL, LOGOUT_URL } from '@/config';
+import { LOGIN_URL, LOGOUT_URL, REGISTER_URL } from '@/config';
 
-// Actualizamos el tipo User para incluir rol y superuser
+// Definimos los tipos según la respuesta de tu API
 type User = {
   id: number;
   username: string;
   email: string;
-  rol: string;      // Nuevo campo
-  superuser: string; // Nuevo campo
+  rol: string;
+  superuser: string;
 };
 
 type LoginResponse = {
@@ -17,15 +17,32 @@ type LoginResponse = {
   user: User;
 };
 
-// Actualizamos AuthContextType para exponer rol y superuser
+// Tipo para la respuesta de registro
+type RegisterResponse = {
+  message: string;
+  user?: {
+    id: number;
+    username: string;
+    email: string;
+  };
+};
+
+// Tipo para los datos de registro
+type RegisterData = {
+  username: string;
+  email: string;
+  password: string;
+};
+
 type AuthContextType = {
   isLoggedIn: boolean;
   token: string | null;
   user: User | null;
-  rol: string | null;       // Nuevo campo
-  superuser: string | null; // Nuevo campo
+  rol: string | null;
+  superuser: string | null;
   login: (username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  register: (data: RegisterData) => Promise<RegisterResponse>; // Nueva función
   loading: boolean;
 };
 
@@ -33,10 +50,11 @@ const AuthContext = createContext<AuthContextType>({
   isLoggedIn: false,
   token: null,
   user: null,
-  rol: null,       // Nuevo campo
-  superuser: null, // Nuevo campo
+  rol: null,
+  superuser: null,
   login: async () => {},
   logout: async () => {},
+  register: async () => ({ message: '' }), // Valor por defecto
   loading: true,
 });
 
@@ -45,8 +63,8 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [rol, setRol] = useState<string | null>(null);       // Nuevo estado
-  const [superuser, setSuperuser] = useState<string | null>(null); // Nuevo estado
+  const [rol, setRol] = useState<string | null>(null);
+  const [superuser, setSuperuser] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -54,14 +72,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         const storedToken = await SecureStore.getItemAsync('session_token');
         const storedUser = await SecureStore.getItemAsync('user_data');
-        const storedRol = await SecureStore.getItemAsync('user_rol');       // Nuevo
-        const storedSuperuser = await SecureStore.getItemAsync('user_superuser'); // Nuevo
+        const storedRol = await SecureStore.getItemAsync('user_rol');
+        const storedSuperuser = await SecureStore.getItemAsync('user_superuser');
         
         if (storedToken && storedUser) {
           setToken(storedToken);
           setUser(JSON.parse(storedUser));
           
-          // Establecemos rol y superuser si existen
           if (storedRol) setRol(storedRol);
           if (storedSuperuser) setSuperuser(storedSuperuser);
         }
@@ -92,11 +109,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       const data: LoginResponse = await response.json();
       
-      // Guardamos el token y los datos del usuario
       await SecureStore.setItemAsync('session_token', data.token);
       await SecureStore.setItemAsync('user_data', JSON.stringify(data.user));
       
-      // Guardamos rol y superuser por separado para facilitar el acceso
       if (data.user.rol) {
         await SecureStore.setItemAsync('user_rol', data.user.rol);
         setRol(data.user.rol);
@@ -109,19 +124,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       setToken(data.token);
       setUser(data.user);
-
     } catch (error) {
-        console.error('Login failed:', error);
-        throw error; // Re-lanzamos el error para que el componente de login pueda manejarlo
+      console.error('Login failed:', error);
+      throw error;
     }
   };
 
   const logout = async () => {
     try {
-      // Obtén el token actual
       const storedToken = await SecureStore.getItemAsync('session_token');
       if (storedToken) {
-        // Llama al endpoint de logout con el token en el header
         await fetch(LOGOUT_URL, {
           method: 'POST',
           headers: {
@@ -131,19 +143,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
       }
 
-      // Limpia el almacenamiento seguro
       await SecureStore.deleteItemAsync('session_token');
       await SecureStore.deleteItemAsync('user_data');
-      await SecureStore.deleteItemAsync('user_rol');       // Nuevo
-      await SecureStore.deleteItemAsync('user_superuser'); // Nuevo
+      await SecureStore.deleteItemAsync('user_rol');
+      await SecureStore.deleteItemAsync('user_superuser');
       
       setToken(null);
       setUser(null);
-      setRol(null);       // Nuevo
-      setSuperuser(null); // Nuevo
+      setRol(null);
+      setSuperuser(null);
     } catch (error) {
       console.error('Logout failed:', error);
-      // Puedes mostrar un mensaje al usuario si lo deseas
+    }
+  };
+
+  // Nueva función de registro
+  const register = async (data: RegisterData): Promise<RegisterResponse> => {
+    try {
+      const response = await fetch(REGISTER_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        // Si el servidor devuelve un error (400, etc.)
+        throw new Error(responseData.message || 'Error en el registro');
+      }
+
+      // Si el registro fue exitoso (201)
+      return responseData;
+    } catch (error) {
+      console.error('Registration failed:', error);
+      throw error;
     }
   };
 
@@ -153,10 +189,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLoggedIn: !!token,
         token,
         user,
-        rol,       // Nuevo
-        superuser, // Nuevo
+        rol,
+        superuser,
         login,
         logout,
+        register, // Añadimos la función de registro
         loading,
       }}
     >
