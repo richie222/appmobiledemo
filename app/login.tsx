@@ -2,50 +2,34 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 
-interface RegisterScreenProps {}
-
-export default function RegisterScreen({}: RegisterScreenProps) {
+export default function LoginScreen() {
   const router = useRouter();
-  const [alias, setAlias] = useState<string>('');
-  const [correo, setCorreo] = useState<string>('');
+  const [usuario, setUsuario] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const camposLlenos = alias.trim() !== '' && correo.trim() !== '' && password.trim() !== '';
+  const camposLlenos = usuario.trim() !== '' && password.trim() !== '';
 
-  const handleRegister = () => {
-    // Aquí puedes agregar la lógica para registrar el usuario
-    Alert.alert('Registro', `Alias: ${alias}\nCorreo: ${correo}`);
-    // Después de registrar, podrías navegar al home o a otra pantalla
+  const handleLogin = () => {
+    // Aquí va la lógica de autenticación
+    Alert.alert('Login', `Usuario: ${usuario}`);
     // router.replace('/home');
   };
 
   const handleCancel = () => {
-    router.replace('/tabs'); // Asume que '/' es tu home
+    router.dismissTo('/')
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Registro</Text>
+      <Text style={styles.title}>Sesión</Text>
       <View style={styles.inputGroup}>
         <Text style={styles.label}>
-          Alias/Usuario <Text style={styles.required}>*</Text>
+          Usuario o Correo <Text style={styles.required}>*</Text>
         </Text>
         <TextInput
           style={styles.input}
-          placeholder="Alias/Usuario"
-          value={alias}
-          onChangeText={setAlias}
-        />
-      </View>
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>
-          Correo <Text style={styles.required}>*</Text>
-        </Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Correo"
-          value={correo}
-          onChangeText={setCorreo}
-          keyboardType="email-address"
+          placeholder="Usuario o correo"
+          value={usuario}
+          onChangeText={setUsuario}
           autoCapitalize="none"
         />
       </View>
@@ -68,10 +52,10 @@ export default function RegisterScreen({}: RegisterScreenProps) {
             styles.buttonGreen,
             !camposLlenos && styles.buttonDisabled,
           ]}
-          onPress={handleRegister}
+          onPress={handleLogin}
           disabled={!camposLlenos}
         >
-          <Text style={styles.buttonText}>Registrar</Text>
+          <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button, styles.buttonRed]}

@@ -6,12 +6,12 @@ export default function NewSeasonScreen() {
   const router = useRouter();
 
   const handleCancel = () => {
-    router.replace('/tabs'); // Regresa al home
+    router.dismissTo('/')
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Mantenimiento de Actuación de Jugador</Text>
+      <Text style={styles.text}>Actuación de Jugador</Text>
         <View style={styles.buttonContainer}>
         <TouchableOpacity style={[styles.button, styles.buttonRed]} onPress={handleCancel}>
           <Text style={styles.buttonText}>Cancelar</Text>

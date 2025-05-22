@@ -2,34 +2,50 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 
-export default function LoginScreen() {
-  const router = useRouter();
-  const [usuario, setUsuario] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const camposLlenos = usuario.trim() !== '' && password.trim() !== '';
+interface RegisterScreenProps {}
 
-  const handleLogin = () => {
-    // Aquí va la lógica de autenticación
-    Alert.alert('Login', `Usuario: ${usuario}`);
+export default function RegisterScreen({}: RegisterScreenProps) {
+  const router = useRouter();
+  const [alias, setAlias] = useState<string>('');
+  const [correo, setCorreo] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const camposLlenos = alias.trim() !== '' && correo.trim() !== '' && password.trim() !== '';
+
+  const handleRegister = () => {
+    // Aquí puedes agregar la lógica para registrar el usuario
+    Alert.alert('Registro', `Alias: ${alias}\nCorreo: ${correo}`);
+    // Después de registrar, podrías navegar al home o a otra pantalla
     // router.replace('/home');
   };
 
   const handleCancel = () => {
-    router.replace('/tabs'); // Ajusta la ruta si tu home es diferente
+    router.dismissTo('/')
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Iniciar Sesión</Text>
+      <Text style={styles.title}>Registro</Text>
       <View style={styles.inputGroup}>
         <Text style={styles.label}>
-          Usuario o Correo <Text style={styles.required}>*</Text>
+          Alias/Usuario <Text style={styles.required}>*</Text>
         </Text>
         <TextInput
           style={styles.input}
-          placeholder="Usuario o correo"
-          value={usuario}
-          onChangeText={setUsuario}
+          placeholder="Alias/Usuario"
+          value={alias}
+          onChangeText={setAlias}
+        />
+      </View>
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>
+          Correo <Text style={styles.required}>*</Text>
+        </Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Correo"
+          value={correo}
+          onChangeText={setCorreo}
+          keyboardType="email-address"
           autoCapitalize="none"
         />
       </View>
@@ -52,10 +68,10 @@ export default function LoginScreen() {
             styles.buttonGreen,
             !camposLlenos && styles.buttonDisabled,
           ]}
-          onPress={handleLogin}
+          onPress={handleRegister}
           disabled={!camposLlenos}
         >
-          <Text style={styles.buttonText}>Entrar</Text>
+          <Text style={styles.buttonText}>Registrar</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button, styles.buttonRed]}
