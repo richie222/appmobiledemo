@@ -1,17 +1,31 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useAuth } from '@/contexts/auth-context';
 
 export default function LoginScreen() {
   const router = useRouter();
   const [usuario, setUsuario] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const camposLlenos = usuario.trim() !== '' && password.trim() !== '';
+  const { login } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = () => {
-    // Aquí va la lógica de autenticación
-    Alert.alert('Login', `Usuario: ${usuario}`);
-    // router.replace('/home');
+const handleLogin = async () => {
+    if (!usuario || !password) {
+      Alert.alert('Error', 'Por favor ingresa usuario y contraseña');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await login(usuario, password);
+      router.dismissTo('/')
+    } catch (error) {
+      Alert.alert('Error', error instanceof Error ? error.message : 'Error al iniciar sesión');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCancel = () => {
@@ -53,9 +67,11 @@ export default function LoginScreen() {
             !camposLlenos && styles.buttonDisabled,
           ]}
           onPress={handleLogin}
-          disabled={!camposLlenos}
+          disabled={!camposLlenos || isLoading}
         >
-          <Text style={styles.buttonText}>Entrar</Text>
+          <Text style={styles.buttonText}>
+            {isLoading ? 'Cargando...' : 'Entrar'}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button, styles.buttonRed]}
