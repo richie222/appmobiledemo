@@ -7,6 +7,7 @@ export default function TabLayout() {
   return (
         <Tabs
         screenOptions={{
+            headerShown: false, // <--- Esto oculta el header y el texto "tabs"
             tabBarActiveTintColor: '#ffd33d',
             headerStyle: {
             backgroundColor: '#25292e',
