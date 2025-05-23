@@ -25,6 +25,7 @@ export default function RootLayout() {
           <Stack.Screen name="ActBatter" options={{ title: 'Actuación' }} />
           <Stack.Screen name="newGame" options={{ title: 'Registrar nuevo juego' }} />
           <Stack.Screen name="registerActBatter" options={{ title: 'Ofensiva Jugador' }} />
+          <Stack.Screen name="statsTeam" options={{ title: 'Ofensiva Torneo' }} />
           {/* Agrega aquí más pantallas si lo necesitas */}
         </Stack>
       </AuthProvider>

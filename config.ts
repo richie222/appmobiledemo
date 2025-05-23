@@ -6,3 +6,4 @@ export const REGISTER_URL = `${API_URL}/register`;
 export const SEASONS_URL = `${API_URL}/seasons`;
 export const GAMES_URL = `${API_URL}/games`;
 export const STATS_PLAYER_URL = `${API_URL}/offensive-player-data`;
+export const STATS_BY_SEASON_URL = `${API_URL}/offensive-stats-by-season`;

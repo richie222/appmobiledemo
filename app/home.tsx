@@ -62,6 +62,10 @@ const Home = () => {
     router.dismissTo('/')
   };
 
+  const goToRegisterStatsTeam = () => {
+    router.push('/statsTeam');
+  };
+
   const isAdmin = rol === 'A' || superuser === 'S';
 
 return (
@@ -95,11 +99,19 @@ return (
               <Text style={styles.buttonText}>Mantenimiento de Act. de Bateador</Text>
             </TouchableOpacity>
             <View style={{ height: 16 }} />
+            <TouchableOpacity style={[styles.button, styles.buttonGreen]} onPress={goToRegisterStatsTeam}>
+              <Text style={styles.buttonText}>Avg. por Torneo</Text>
+            </TouchableOpacity>
+            <View style={{ height: 16 }} />
           </>
         ) : (
           <>
             <TouchableOpacity style={[styles.button, styles.buttonGreen]} onPress={goTomaintBatter}>
               <Text style={styles.buttonText}>Registrar Act. de Bateador</Text>
+            </TouchableOpacity>
+            <View style={{ height: 16 }} />
+            <TouchableOpacity style={[styles.button, styles.buttonGreen]} onPress={goToRegisterStatsTeam}>
+              <Text style={styles.buttonText}>Avg. por Torneo</Text>
             </TouchableOpacity>
             <View style={{ height: 16 }} />
           </>
