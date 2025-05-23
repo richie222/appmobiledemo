@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { useAuth } from '@/contexts/auth-context';
 
 export default function NewSeasonScreen() {
   
@@ -13,9 +14,11 @@ export default function NewSeasonScreen() {
     router.dismissTo('/')
   };
 
+  const { user } = useAuth();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Actuación de Jugador</Text>
+      <Text style={styles.text}>Jugador: {user?.username || 'Invitado'}</Text>
         <View style={styles.buttonContainer}>
         <TouchableOpacity style={[styles.button, styles.buttonRed]} onPress={handleCancel}>
           <Text style={styles.buttonText}>Cancelar</Text>

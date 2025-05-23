@@ -1,12 +1,17 @@
-// app/index.jsx
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import Home from '../app/home'; // Importa el componente
+import Home from '../app/home';
+import { useAuth } from '@/contexts/auth-context';
 
 export default function HomeScreen() {
+
+  const { user, isLoggedIn } = useAuth();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Bienvenidos</Text>
+      {isLoggedIn && (
+        <Text style={styles.title}>Bienvenido: {user?.username}</Text>
+      )}
       <Home />
     </View>
   );
