@@ -9,7 +9,7 @@ import { SEASONS_URL, GAMES_URL, STATS_PLAYER_URL } from '@/config';
 export default function ActBatterScreen() {
   useAuthGuard();
   const router = useRouter();
-  const { user } = useAuth(); // Suponiendo que aquí tienes el id del jugador
+  const { user } = useAuth();
 
   // Dropdown Temporadas
   const [openSeasons, setOpenSeasons] = useState(false);
@@ -66,7 +66,7 @@ export default function ActBatterScreen() {
     if (!selectedSeason) {
       setGames([]);
       setSelectedGame(null);
-      setOffensiveData(null); // Limpiar datos ofensivos
+      setOffensiveData(null);
       return;
     }
     const fetchGames = async () => {
@@ -97,26 +97,20 @@ export default function ActBatterScreen() {
   useEffect(() => {
     const fetchOffensiveData = async () => {
       if (!selectedSeason || !selectedGame || !user?.id) {
-        setOffensiveData(null); // Limpiar datos ofensivos
+        setOffensiveData(null);
         return;
       }
       setLoadingOffensive(true);
       setOffensiveData(null);
       try {
         const url = `${STATS_PLAYER_URL}?id_season=${selectedSeason}&id_game=${selectedGame}&id_player=${user.id}`;
-
         const res = await fetch(url);
-
         if (!res.ok) throw new Error('No se encontró información');
         const data = await res.json();
-        console.log('Data ofensiva:', data);
-        
-        let offensiveStats= {};
-
+        let offensiveStats = {};
         if (data.count === 0) {
           offensiveStats = { Mensaje: 'No hay datos ofensivos disponibles' };
-        }else{
-          console.log('Data ofensiva:', data.data);
+        } else {
           const objdata = data.data[0];
           offensiveStats = {
             VB: objdata.vb,
@@ -128,12 +122,10 @@ export default function ActBatterScreen() {
             K: objdata.kk,
           };
         }
-
-
         setOffensiveData(offensiveStats);
       } catch (e) {
         setOffensiveData(null);
-        Alert.alert('Sin datos', 'No hay registro ofensivo para este jugador en este juego.'+e);
+        // Puedes mostrar un mensaje como texto si lo prefieres
       } finally {
         setLoadingOffensive(false);
       }
@@ -143,6 +135,20 @@ export default function ActBatterScreen() {
 
   const handleCancel = () => {
     router.dismissTo('/');
+  };
+
+  const handleRegister = () => {
+    const selectedSeasonLabel = seasons.find(s => s.value === selectedSeason)?.label;
+    const selectedGameLabel = games.find(g => g.value === selectedGame)?.label;
+    router.push({ 
+      pathname: '/registerActBatter', 
+      params: { 
+      id_season: selectedSeason, 
+      id_game: selectedGame,
+      season_label: selectedSeasonLabel,
+      game_label: selectedGameLabel
+      } 
+    });
   };
 
   return (
@@ -194,7 +200,6 @@ export default function ActBatterScreen() {
       ) : offensiveData ? (
         <View style={styles.dataContainer}>
           <Text style={styles.dataTitle}>Datos ofensivos:</Text>
-          {/* Ajusta los campos según tu API */}
           {Object.entries(offensiveData).map(([key, value]) => (
             <Text key={key} style={styles.dataText}>
               {key}: {String(value)}
@@ -202,6 +207,16 @@ export default function ActBatterScreen() {
           ))}
         </View>
       ) : null}
+
+      {/* Botón Registrar Actuación */}
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={[styles.button, styles.buttonGreen]}
+          onPress={handleRegister}
+        >
+          <Text style={styles.buttonText}>Registrar Actuación</Text>
+        </TouchableOpacity>
+      </View>
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={[styles.button, styles.buttonRed]} onPress={handleCancel}>
@@ -227,13 +242,13 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: '80%',
     alignItems: 'center',
+    marginBottom: 10,
   },
   button: {
     width: '100%',
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: 'center',
-    marginBottom: 10,
   },
   buttonGreen: {
     backgroundColor: '#4caf50',
