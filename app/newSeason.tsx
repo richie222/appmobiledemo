@@ -16,6 +16,7 @@ import {
 import { useRouter } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as SecureStore from 'expo-secure-store';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 type Season = {
   id: number;
@@ -24,6 +25,9 @@ type Season = {
 };
 
 export default function NewSeasonScreen() {
+
+  useAuthGuard();
+
   const router = useRouter();
   const [seasons, setSeasons] = useState<Season[]>([]);
   const [loading, setLoading] = useState(true);

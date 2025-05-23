@@ -1,8 +1,12 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 export default function NewSeasonScreen() {
+  
+  useAuthGuard();
+
   const router = useRouter();
 
   const handleCancel = () => {

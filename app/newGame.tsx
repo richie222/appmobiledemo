@@ -16,6 +16,7 @@ import {
 import { useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 type Season = {
   id: number;
@@ -24,6 +25,9 @@ type Season = {
 };
 
 export default function NewGameScreen() {
+  
+  useAuthGuard();
+  
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [loadingSeasons, setLoadingSeasons] = useState(true);

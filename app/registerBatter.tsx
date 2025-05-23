@@ -3,8 +3,12 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/auth-context';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 export default function RegisterBatterScreen() {
+  
+  useAuthGuard();
+
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
