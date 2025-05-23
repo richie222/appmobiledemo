@@ -50,11 +50,11 @@ const Home = () => {
   };
 
   const goTomaintBatter = () => {
-    router.push('/maintBatter');
+    router.push('/ActBatter');
   };
 
   const goToRegisterActBatter = () => {
-    router.push('/registerActBatter');
+    router.push('/registerBatter');
   };
 
   const handleLogout = async () => {
@@ -98,7 +98,7 @@ return (
           </>
         ) : (
           <>
-            <TouchableOpacity style={[styles.button, styles.buttonGreen]} onPress={goToRegisterActBatter}>
+            <TouchableOpacity style={[styles.button, styles.buttonGreen]} onPress={goTomaintBatter}>
               <Text style={styles.buttonText}>Registrar Act. de Bateador</Text>
             </TouchableOpacity>
             <View style={{ height: 16 }} />

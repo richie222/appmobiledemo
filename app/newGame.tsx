@@ -220,7 +220,7 @@ export default function NewGameScreen() {
           <>
             {/* Selector de Temporada */}
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Torneo <Text style={styles.required}>*</Text></Text>
+              <Text style={styles.label}>Torneo</Text>
               <View style={styles.dropdownContainer}>
                 <DropDownPicker
                   open={openSeasons}
