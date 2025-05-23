@@ -21,9 +21,10 @@ export default function RootLayout() {
           <Stack.Screen name="login" options={{ title: 'Iniciar Sesión' }} />
           <Stack.Screen name="registerBatter" options={{ title: 'Registrar Jugador' }} />
           <Stack.Screen name="newSeason" options={{ title: 'Mantenimiento' }} />
-          <Stack.Screen name="registerGame" options={{ title: 'Mantenimiento' }} />
+          <Stack.Screen name="registerGame" options={{ title: 'Juegos por Torneo' }} />
           <Stack.Screen name="registerActBatter" options={{ title: 'Registrar' }} />
           <Stack.Screen name="maintBatter" options={{ title: 'Mantenimiento' }} />
+          <Stack.Screen name="newGame" options={{ title: 'Registrar nuevo juego' }} />
           {/* Agrega aquí más pantallas si lo necesitas */}
         </Stack>
       </AuthProvider>
