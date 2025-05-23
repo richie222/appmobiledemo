@@ -4,6 +4,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityInd
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/auth-context';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { Ionicons } from '@expo/vector-icons'; // Importar iconos
 
 export default function RegisterBatterScreen() {
   
@@ -13,6 +14,8 @@ export default function RegisterBatterScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // Estado para mostrar/ocultar contraseña
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Estado para mostrar/ocultar confirmación
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   
@@ -91,7 +94,7 @@ export default function RegisterBatterScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Registrar Jugador</Text>
+      <Text style={styles.title}>Jugador</Text>
       
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Nombre de usuario <Text style={styles.required}>*</Text></Text>
@@ -118,23 +121,47 @@ export default function RegisterBatterScreen() {
       
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Contraseña <Text style={styles.required}>*</Text></Text>
-        <TextInput
-          style={[styles.input, errors.password ? styles.inputError : null]}
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+        <View style={[styles.passwordContainer, errors.password ? styles.inputError : null]}>
+          <TextInput
+            style={styles.passwordInput}
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!showPassword}
+          />
+          <TouchableOpacity
+            style={styles.eyeIcon}
+            onPress={() => setShowPassword(!showPassword)}
+          >
+            <Ionicons
+              name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+              size={22}
+              color="#757575"
+            />
+          </TouchableOpacity>
+        </View>
         {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
       </View>
       
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Confirmar contraseña <Text style={styles.required}>*</Text></Text>
-        <TextInput
-          style={[styles.input, errors.confirmPassword ? styles.inputError : null]}
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry
-        />
+        <View style={[styles.passwordContainer, errors.confirmPassword ? styles.inputError : null]}>
+          <TextInput
+            style={styles.passwordInput}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry={!showConfirmPassword}
+          />
+          <TouchableOpacity
+            style={styles.eyeIcon}
+            onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+          >
+            <Ionicons
+              name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'}
+              size={22}
+              color="#757575"
+            />
+          </TouchableOpacity>
+        </View>
         {errors.confirmPassword ? <Text style={styles.errorText}>{errors.confirmPassword}</Text> : null}
       </View>
       
@@ -193,6 +220,23 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     fontSize: 16,
+  },
+  // Nuevos estilos para los campos de contraseña
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+  },
+  passwordInput: {
+    flex: 1,
+    padding: 10,
+    fontSize: 16,
+  },
+  eyeIcon: {
+    padding: 10,
   },
   inputError: {
     borderColor: 'red',

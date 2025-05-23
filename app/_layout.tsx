@@ -18,8 +18,8 @@ export default function RootLayout() {
           />
           
           {/* Otras pantallas */}
-          <Stack.Screen name="login" options={{ title: 'Iniciar Sesión' }} />
-          <Stack.Screen name="registerBatter" options={{ title: 'Registrar Jugador' }} />
+          <Stack.Screen name="login" options={{ title: 'Sesión' }} />
+          <Stack.Screen name="registerBatter" options={{ title: 'Registrar' }} />
           <Stack.Screen name="newSeason" options={{ title: 'Mantenimiento' }} />
           <Stack.Screen name="registerGame" options={{ title: 'Juegos por Torneo' }} />
           <Stack.Screen name="registerActBatter" options={{ title: 'Registrar' }} />
