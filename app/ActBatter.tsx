@@ -40,9 +40,9 @@ export default function ActBatterScreen() {
           value: season.id,
         }));
         setSeasons(seasonItems);
-        if (seasonItems.length > 0) {
+        /*if (seasonItems.length > 0) {
           setSelectedSeason(seasonItems[seasonItems.length - 1].value);
-        }
+        }*/
       } catch (e) {
         Alert.alert('Error', 'No se pudieron cargar las temporadas');
       } finally {
@@ -79,11 +79,11 @@ export default function ActBatterScreen() {
           value: game.id,
         }));
         setGames(gameItems);
-        if (gameItems.length > 0) {
+        /*if (gameItems.length > 0) {
           setSelectedGame(gameItems[gameItems.length - 1].value);
         } else {
           setSelectedGame(null);
-        }
+        }*/
       } catch (e) {
         Alert.alert('Error', 'No se pudieron cargar los juegos');
       } finally {

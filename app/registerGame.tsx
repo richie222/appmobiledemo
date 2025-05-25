@@ -109,11 +109,6 @@ export default function RegisterGameScreen() {
       
       setSeasons(seasonOptions);
       
-      // Si hay temporadas, seleccionar la primera por defecto
-      if (seasonOptions.length > 0) {
-        setSelectedSeasonId(seasonOptions[0].value);
-      }
-      
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido');
     } finally {
@@ -207,7 +202,7 @@ export default function RegisterGameScreen() {
         ) : (
           <>
             <View style={styles.seasonSelector}>
-              <Text style={styles.label}>Torneo <Text style={styles.required}>*</Text></Text>
+              <Text style={styles.label}>Torneo</Text>
               <View style={styles.dropdownContainer}>
                 <DropDownPicker
                   open={open}
