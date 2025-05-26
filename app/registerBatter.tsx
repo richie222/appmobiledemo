@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/auth-context';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { Ionicons } from '@expo/vector-icons'; // Importar iconos
+import styles from './styles';
 
 export default function RegisterBatterScreen() {
   
@@ -103,6 +104,7 @@ export default function RegisterBatterScreen() {
           value={username}
           onChangeText={setUsername}
           autoCapitalize="none"
+          placeholder="Usuario"
         />
         {errors.username ? <Text style={styles.errorText}>{errors.username}</Text> : null}
       </View>
@@ -115,6 +117,7 @@ export default function RegisterBatterScreen() {
           onChangeText={setEmail}
           autoCapitalize="none"
           keyboardType="email-address"
+          placeholder="Correo electrónico"
         />
         {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
       </View>
@@ -127,6 +130,7 @@ export default function RegisterBatterScreen() {
             value={password}
             onChangeText={setPassword}
             secureTextEntry={!showPassword}
+            placeholder="Contraseña"
           />
           <TouchableOpacity
             style={styles.eyeIcon}
@@ -150,6 +154,7 @@ export default function RegisterBatterScreen() {
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             secureTextEntry={!showConfirmPassword}
+            placeholder="Contraseña"
           />
           <TouchableOpacity
             style={styles.eyeIcon}
@@ -177,96 +182,7 @@ export default function RegisterBatterScreen() {
             <Text style={styles.buttonText}>Registrar</Text>
           )}
         </TouchableOpacity>
-        
-        <TouchableOpacity
-          style={[styles.button, styles.buttonRed]}
-          onPress={handleCancel}
-          disabled={isLoading}
-        >
-          <Text style={styles.buttonText}>Cancelar</Text>
-        </TouchableOpacity>
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#f5f5f5',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  inputGroup: {
-    marginBottom: 15,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
-    fontWeight: '500',
-  },
-  required: {
-    color: 'red',
-  },
-  input: {
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 10,
-    fontSize: 16,
-  },
-  // Nuevos estilos para los campos de contraseña
-  passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-  },
-  passwordInput: {
-    flex: 1,
-    padding: 10,
-    fontSize: 16,
-  },
-  eyeIcon: {
-    padding: 10,
-  },
-  inputError: {
-    borderColor: 'red',
-  },
-  errorText: {
-    color: 'red',
-    fontSize: 14,
-    marginTop: 5,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
-  },
-  button: {
-    flex: 1,
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginHorizontal: 5,
-  },
-  buttonGreen: {
-    backgroundColor: '#4caf50',
-  },
-  buttonRed: {
-    backgroundColor: '#e57373',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-});

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useAuth } from '@/contexts/auth-context';
 import { STATS_PLAYER_URL } from '@/config';
+import styles from './styles';
 
 export default function RegisterActBatterScreen() {
   useAuthGuard();
@@ -135,7 +136,7 @@ export default function RegisterActBatterScreen() {
         {/* Campos de datos ofensivos */}
         <View style={styles.statsContainer}>
           <Text style={styles.statsTitle}>Estadísticas Ofensivas</Text>
-          <Counter label="Veces al Bate (VB)" value={vb} setValue={setVb} />
+          <Counter label="Veces al Bate (VB)" value={vb} setValue={setVb}/>
           <Counter label="Hits (H)" value={hit} setValue={setHit} />
           <Counter label="Dobles (2B)" value={doubles} setValue={setDoubles} />
           <Counter label="Triples (3B)" value={triples} setValue={setTriples} />
@@ -154,106 +155,9 @@ export default function RegisterActBatterScreen() {
               {submitting ? 'Guardando...' : 'Guardar'}
             </Text>
           </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, styles.buttonRed]}
-            onPress={handleCancel}
-            disabled={submitting}
-          >
-            <Text style={styles.buttonText}>Cancelar</Text>
-          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
-    scrollContainer: {
-        flexGrow: 1,
-    },
-    container: {
-        flex: 1,
-        padding: 20,
-        backgroundColor: '#fff',
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-        textAlign: 'center',
-    },
-    inputContainer: {
-        marginBottom: 20,
-    },
-    label: {
-        fontSize: 16,
-        marginBottom: 5,
-    },
-    valueText: {
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    statsContainer: {
-        marginTop: 20,
-        marginBottom: 20,
-        padding: 15,
-        backgroundColor: '#fff9c4', // amarillo opaco
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: '#eee',
-    },
-    statsTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 15,
-        textAlign: 'center',
-    },
-    counterRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 15,
-        justifyContent: 'space-between',
-    },
-    counterContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    counterButton: {
-        backgroundColor: '#4caf50',
-        paddingHorizontal: 14,
-        paddingVertical: 6,
-        borderRadius: 6,
-        marginHorizontal: 8,
-    },
-    counterButtonText: {
-        color: '#fff',
-        fontSize: 22,
-        fontWeight: 'bold',
-    },
-    counterValue: {
-        fontSize: 20,
-        minWidth: 30,
-        textAlign: 'center',
-    },
-    buttonContainer: {
-        marginTop: 20,
-    },
-    button: {
-        paddingVertical: 14,
-        borderRadius: 8,
-        alignItems: 'center',
-        marginBottom: 10,
-    },
-    buttonGreen: {
-        backgroundColor: '#4caf50',
-    },
-    buttonRed: {
-        backgroundColor: '#e57373',
-    },
-    buttonText: {
-        color: '#fff',
-        fontWeight: 'bold',
-        fontSize: 16,
-    },
-});

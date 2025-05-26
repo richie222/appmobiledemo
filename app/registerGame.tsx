@@ -14,6 +14,7 @@ import { useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
+import styles from './styles';
 
 type Season = {
   id: number;
@@ -67,6 +68,7 @@ export default function RegisterGameScreen() {
   useEffect(() => {
     if (selectedSeasonId) {
       fetchGames(selectedSeasonId);
+    
     }
   }, [selectedSeasonId]);
 
@@ -248,152 +250,19 @@ export default function RegisterGameScreen() {
                     )}
                   </>
                 )}
-                
-                <TouchableOpacity 
-                  style={[styles.button, styles.buttonGreen, styles.newGameButton]} 
-                  onPress={handleCreateGame}
-                >
-                  <Text style={styles.buttonText}>Nuevo Juego</Text>
-                </TouchableOpacity>
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity 
+                    style={[styles.button, styles.buttonGreen, styles.newGameButton]} 
+                    onPress={handleCreateGame}
+                  >
+                    <Text style={styles.buttonText}>Nuevo Juego</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             )}
-            
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity 
-                style={[styles.button, styles.buttonRed]} 
-                onPress={handleCancel}
-              >
-                <Text style={styles.buttonText}>Volver</Text>
-              </TouchableOpacity>
-            </View>
           </>
         )}
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  content: {
-    padding: 20,
-    paddingTop: 40,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  seasonSelector: {
-    marginBottom: 20,
-    zIndex: 3000, // Importante para que el dropdown funcione correctamente
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
-    fontWeight: '500',
-  },
-  required: {
-    color: 'red',
-  },
-  dropdownContainer: {
-    zIndex: 3000, // Importante para que el dropdown funcione correctamente
-  },
-  dropdown: {
-    backgroundColor: '#f9f9f9',
-    borderColor: '#ddd',
-    borderRadius: 8,
-  },
-  dropdownList: {
-    backgroundColor: '#f9f9f9',
-    borderColor: '#ddd',
-  },
-  dropdownItem: {
-    color: '#333',
-  },
-  dropdownPlaceholder: {
-    color: '#999',
-  },
-  gamesContainer: {
-    marginTop: 20,
-    zIndex: 1, // Menor que el dropdown para que no interfiera
-  },
-  seasonInfoContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  seasonInfo: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  gamesList: {
-    marginTop: 10,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    backgroundColor: '#f0f0f0',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  headerCell: {
-    fontWeight: 'bold',
-    fontSize: 14,
-    textAlign: 'center',
-  },
-  dataRow: {
-    flexDirection: 'row',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  dataCell: {
-    fontSize: 14,
-    textAlign: 'center',
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#888',
-    marginTop: 20,
-    textAlign: 'center',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
-  },
-  button: {
-    width: '100%',
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  buttonGreen: {
-    backgroundColor: '#4caf50',
-  },
-  buttonRed: {
-    backgroundColor: '#e57373',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-    textAlign: 'center', // Asegúrate de que el texto esté centrado
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 10,
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  newGameButton: {
-    marginTop: 10,
-    width: '100%',
-  },
-});

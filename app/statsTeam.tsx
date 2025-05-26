@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, FlatList, Alert } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { SEASONS_URL, STATS_BY_SEASON_URL } from '@/config';
+import styles from './styles';
 
 export default function OffensiveStatsBySeasonScreen() {
   // Dropdown Temporadas
@@ -82,7 +83,7 @@ export default function OffensiveStatsBySeasonScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Estadísticas</Text>
-      <View style={{ zIndex: 2, width: '90%', marginBottom: 20 }}>
+      <View style={{ zIndex: 2, width: '100%', marginBottom: 20 }}>
         <DropDownPicker
           open={openSeasons}
           value={selectedSeason}
@@ -93,6 +94,10 @@ export default function OffensiveStatsBySeasonScreen() {
           placeholder="Selecciona un Torneo"
           zIndex={2000}
           loading={loadingSeasons}
+          style={styles.dropdown}
+          dropDownContainerStyle={styles.dropdownList}
+          listItemLabelStyle={styles.dropdownItem}
+          placeholderStyle={styles.dropdownPlaceholder}
         />
       </View>
 
@@ -118,55 +123,8 @@ export default function OffensiveStatsBySeasonScreen() {
           />
         </View>
       ) : selectedSeason ? (
-        <Text style={{ marginTop: 20 }}>No hay datos ofensivos para este torneo.</Text>
+        <Text style={styles.label}>No hay datos ofensivos para este torneo.</Text>
       ) : null}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    paddingTop: 30,
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  tableContainer: {
-    width: '98%',
-    marginTop: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    backgroundColor: '#f9f9f9',
-    paddingBottom: 10,
-  },
-  row: {
-    flexDirection: 'row',
-    paddingVertical: 6,
-    paddingHorizontal: 2,
-    alignItems: 'center',
-  },
-  headerRow: {
-    backgroundColor: '#4caf50',
-  },
-  headerCell: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  rowEven: {
-    backgroundColor: '#f1f8e9',
-  },
-  rowOdd: {
-    backgroundColor: '#fff',
-  },
-  cell: {
-    flex: 1,
-    textAlign: 'center',
-    fontSize: 14,
-  },
-});

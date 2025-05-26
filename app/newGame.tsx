@@ -17,6 +17,7 @@ import { useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
+import styles from './styles';
 
 type Season = {
   id: number;
@@ -252,7 +253,7 @@ export default function NewGameScreen() {
 
             {/* Puntaje del Equipo Contrario */}
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Carreras del Rival<Text style={styles.required}>*</Text></Text>
+              <Text style={styles.label}>Carreras del Rival <Text style={styles.required}>*</Text></Text>
               <TextInput
                 style={styles.input}
                 value={opposingTeamScore}
@@ -264,7 +265,7 @@ export default function NewGameScreen() {
 
             {/* Puntaje de Nuestro Equipo */}
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Carreas de Toros<Text style={styles.required}>*</Text></Text>
+              <Text style={styles.label}>Carreas de Toros <Text style={styles.required}>*</Text></Text>
               <TextInput
                 style={styles.input}
                 value={teamScore}
@@ -305,14 +306,6 @@ export default function NewGameScreen() {
                   <Text style={styles.buttonText}>Guardar</Text>
                 )}
               </TouchableOpacity>
-              
-              <TouchableOpacity 
-                style={[styles.button, styles.buttonRed]} 
-                onPress={handleCancel}
-                disabled={loading}
-              >
-                <Text style={styles.buttonText}>Cancelar</Text>
-              </TouchableOpacity>
             </View>
           </>
         )}
@@ -320,108 +313,3 @@ export default function NewGameScreen() {
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  content: {
-    padding: 20,
-    paddingTop: 40,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  formGroup: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
-    fontWeight: '500',
-  },
-  required: {
-    color: 'red',
-  },
-  input: {
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-  },
-  dropdownContainer: {
-    zIndex: 3000,
-  },
-  dropdown: {
-    backgroundColor: '#f9f9f9',
-    borderColor: '#ddd',
-    borderRadius: 8,
-  },
-  dropdownList: {
-    backgroundColor: '#f9f9f9',
-    borderColor: '#ddd',
-  },
-  dropdownItem: {
-    color: '#333',
-  },
-  dropdownPlaceholder: {
-    color: '#999',
-  },
-  winContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#f9f9f9',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-  },
-  winStatus: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  winNote: {
-    fontSize: 12,
-    color: '#666',
-    marginTop: 5,
-    fontStyle: 'italic',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
-  },
-  button: {
-    flex: 1,
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 5,
-  },
-  buttonGreen: {
-    backgroundColor: '#4caf50',
-  },
-  buttonRed: {
-    backgroundColor: '#e57373',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 10,
-    fontSize: 16,
-    textAlign: 'center',
-  },
-});

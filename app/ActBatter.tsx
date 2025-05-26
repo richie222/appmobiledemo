@@ -5,6 +5,7 @@ import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useAuth } from '@/contexts/auth-context';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { SEASONS_URL, GAMES_URL, STATS_PLAYER_URL } from '@/config';
+import styles from './styles';
 
 export default function ActBatterScreen() {
   useAuthGuard();
@@ -153,14 +154,15 @@ export default function ActBatterScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Jugador: {user?.username}</Text>
+      <Text style={styles.title}>Jugador: {user?.username}</Text>
 
       {/* Dropdown de Temporadas */}
-      <View style={{ zIndex: 2, width: '80%', marginBottom: 20 }}>
-        <Text style={{ marginBottom: 5 }}>Torneo</Text>
+      <View style={{ zIndex: 2, width: '100%', marginBottom: 20 }}>
+        <Text style={styles.label}>Torneo</Text>
         {loadingSeasons ? (
           <ActivityIndicator />
         ) : (
+          <View style={styles.dropdownContainer}>
           <DropDownPicker
             open={openSeasons}
             value={selectedSeason}
@@ -169,17 +171,23 @@ export default function ActBatterScreen() {
             setValue={setSelectedSeason}
             setItems={setSeasons}
             placeholder="Selecciona un Torneo"
+            style={styles.dropdown}
+            dropDownContainerStyle={styles.dropdownList}
+            listItemLabelStyle={styles.dropdownItem}
+            placeholderStyle={styles.dropdownPlaceholder}
             zIndex={2000}
           />
+          </View>
         )}
       </View>
 
       {/* Dropdown de Juegos */}
-      <View style={{ zIndex: 1, width: '80%', marginBottom: 20 }}>
-        <Text style={{ marginBottom: 5 }}>Juego</Text>
+      <View style={{ zIndex: 1, width: '100%', marginBottom: 20 }}>
+        <Text style={styles.label}>Juego</Text>
         {loadingGames ? (
           <ActivityIndicator />
         ) : (
+          <View style={styles.dropdownContainer}>
           <DropDownPicker
             open={openGames}
             value={selectedGame}
@@ -189,8 +197,13 @@ export default function ActBatterScreen() {
             setItems={setGames}
             placeholder="Selecciona un juego"
             disabled={!selectedSeason}
+            style={styles.dropdown}
+            dropDownContainerStyle={styles.dropdownList}
+            listItemLabelStyle={styles.dropdownItem}
+            placeholderStyle={styles.dropdownPlaceholder}
             zIndex={1000}
           />
+          </View>
         )}
       </View>
 
@@ -217,64 +230,6 @@ export default function ActBatterScreen() {
           <Text style={styles.buttonText}>Registrar Actuación</Text>
         </TouchableOpacity>
       </View>
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={[styles.button, styles.buttonRed]} onPress={handleCancel}>
-          <Text style={styles.buttonText}>Cancelar</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  buttonContainer: {
-    width: '80%',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  button: {
-    width: '100%',
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  buttonGreen: {
-    backgroundColor: '#4caf50',
-  },
-  buttonRed: {
-    backgroundColor: '#e57373',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  dataContainer: {
-    width: '80%',
-    backgroundColor: '#f1f8e9',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 20,
-  },
-  dataTitle: {
-    fontWeight: 'bold',
-    marginBottom: 8,
-    fontSize: 16,
-  },
-  dataText: {
-    fontSize: 15,
-    marginBottom: 2,
-  },
-});

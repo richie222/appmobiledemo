@@ -17,6 +17,7 @@ import { useRouter } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as SecureStore from 'expo-secure-store';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
+import styles from './styles';
 
 type Season = {
   id: number;
@@ -75,7 +76,7 @@ export default function NewSeasonScreen() {
       <Text style={[styles.headerCell, { width: '15%' }]}>Id</Text>
       <Text style={[styles.headerCell, { width: '40%' }]}>Temporada</Text>
       <Text style={[styles.headerCell, { width: '30%' }]}>Inicio</Text>
-      <Text style={[styles.headerCell, { width: '15%' }]}>Acciones</Text>
+      <Text style={[styles.headerCell, { width: '15%' }]}>Editar</Text>
     </View>
   );
 
@@ -208,17 +209,7 @@ export default function NewSeasonScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Mantenimiento de Temporadas</Text>
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={[styles.button, styles.buttonGreen]} onPress={handleCreateSeason}>
-          <Text style={styles.buttonText}>Crear Temporada</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, styles.buttonRed]} onPress={handleCancel}>
-          <Text style={styles.buttonText}>Cancelar</Text>
-        </TouchableOpacity>
-      </View>
-
+      <Text style={styles.title}>Temporadas</Text>
       {loading && <ActivityIndicator size="large" color="#4caf50" />}
       {error && <Text style={styles.errorText}>{error}</Text>}
 
@@ -233,6 +224,11 @@ export default function NewSeasonScreen() {
         />
       )}
 
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={[styles.button, styles.buttonGreen]} onPress={handleCreateSeason}>
+          <Text style={styles.buttonText}>Crear Temporada</Text>
+        </TouchableOpacity>
+      </View>
       <Modal
         animationType="slide"
         transparent={true}
@@ -268,126 +264,3 @@ export default function NewSeasonScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 40,
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 10,
-    fontSize: 16,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#888',
-    marginTop: 20,
-  },
-  buttonContainer: {
-    width: '80%',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 20,
-  },
-  button: {
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    width: '45%',
-  },
-  buttonGreen: {
-    backgroundColor: '#4caf50',
-  },
-  buttonRed: {
-    backgroundColor: '#e57373',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    backgroundColor: '#f0f0f0',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  headerCell: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  dataRow: {
-    flexDirection: 'row',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  dataCell: {
-    fontSize: 14,
-    textAlign: 'center',
-  },
-  editButton: {
-    backgroundColor: '#2196F3',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  editButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  modalView: {
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    width: '80%',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  input: {
-    width: '100%',
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginBottom: 15,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-  },
-});
