@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useAuth } from '@/contexts/auth-context';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { SEASONS_URL, GAMES_URL, STATS_PLAYER_URL } from '@/config';
+import { SEASONS_URL, GAMES_URL, STATS_PLAYER_URL, LIST_PLAYERS_URL } from '@/config';
 import styles from './styles';
 
 export default function ActBatterScreen() {
   useAuthGuard();
   const router = useRouter();
   const { user } = useAuth();
+
+  // Obtén rol y superuser del usuario
+  const rol = user?.rol;
+  const superuser = user?.superuser;
+  const isAdmin = rol === 'A' || superuser === 'S';
 
   // Dropdown Temporadas
   const [openSeasons, setOpenSeasons] = useState(false);
@@ -29,6 +34,9 @@ export default function ActBatterScreen() {
   const [offensiveData, setOffensiveData] = useState<any>(null);
   const [loadingOffensive, setLoadingOffensive] = useState(false);
 
+  // Estado para saber si ya hay datos ofensivos
+  const [hasOffensiveData, setHasOffensiveData] = useState(false);
+
   // Cargar temporadas al montar
   useEffect(() => {
     const fetchSeasons = async () => {
@@ -41,9 +49,6 @@ export default function ActBatterScreen() {
           value: season.id,
         }));
         setSeasons(seasonItems);
-        /*if (seasonItems.length > 0) {
-          setSelectedSeason(seasonItems[seasonItems.length - 1].value);
-        }*/
       } catch (e) {
         Alert.alert('Error', 'No se pudieron cargar las temporadas');
       } finally {
@@ -68,6 +73,7 @@ export default function ActBatterScreen() {
       setGames([]);
       setSelectedGame(null);
       setOffensiveData(null);
+      setHasOffensiveData(false);
       return;
     }
     const fetchGames = async () => {
@@ -80,11 +86,6 @@ export default function ActBatterScreen() {
           value: game.id,
         }));
         setGames(gameItems);
-        /*if (gameItems.length > 0) {
-          setSelectedGame(gameItems[gameItems.length - 1].value);
-        } else {
-          setSelectedGame(null);
-        }*/
       } catch (e) {
         Alert.alert('Error', 'No se pudieron cargar los juegos');
       } finally {
@@ -99,6 +100,7 @@ export default function ActBatterScreen() {
     const fetchOffensiveData = async () => {
       if (!selectedSeason || !selectedGame || !user?.id) {
         setOffensiveData(null);
+        setHasOffensiveData(false);
         return;
       }
       setLoadingOffensive(true);
@@ -111,6 +113,7 @@ export default function ActBatterScreen() {
         let offensiveStats = {};
         if (data.count === 0) {
           offensiveStats = { Mensaje: 'No hay datos ofensivos disponibles' };
+          setHasOffensiveData(false);
         } else {
           const objdata = data.data[0];
           offensiveStats = {
@@ -122,11 +125,12 @@ export default function ActBatterScreen() {
             BB: objdata.bb,
             K: objdata.kk,
           };
+          setHasOffensiveData(true);
         }
         setOffensiveData(offensiveStats);
       } catch (e) {
         setOffensiveData(null);
-        // Puedes mostrar un mensaje como texto si lo prefieres
+        setHasOffensiveData(false);
       } finally {
         setLoadingOffensive(false);
       }
@@ -144,10 +148,10 @@ export default function ActBatterScreen() {
     router.push({ 
       pathname: '/registerActBatter', 
       params: { 
-      id_season: selectedSeason, 
-      id_game: selectedGame,
-      season_label: selectedSeasonLabel,
-      game_label: selectedGameLabel
+        id_season: selectedSeason, 
+        id_game: selectedGame,
+        season_label: selectedSeasonLabel,
+        game_label: selectedGameLabel
       } 
     });
   };
@@ -163,20 +167,20 @@ export default function ActBatterScreen() {
           <ActivityIndicator />
         ) : (
           <View style={styles.dropdownContainer}>
-          <DropDownPicker
-            open={openSeasons}
-            value={selectedSeason}
-            items={seasons}
-            setOpen={setOpenSeasons}
-            setValue={setSelectedSeason}
-            setItems={setSeasons}
-            placeholder="Selecciona un Torneo"
-            style={styles.dropdown}
-            dropDownContainerStyle={styles.dropdownList}
-            listItemLabelStyle={styles.dropdownItem}
-            placeholderStyle={styles.dropdownPlaceholder}
-            zIndex={2000}
-          />
+            <DropDownPicker
+              open={openSeasons}
+              value={selectedSeason}
+              items={seasons}
+              setOpen={setOpenSeasons}
+              setValue={setSelectedSeason}
+              setItems={setSeasons}
+              placeholder="Selecciona un Torneo"
+              style={styles.dropdown}
+              dropDownContainerStyle={styles.dropdownList}
+              listItemLabelStyle={styles.dropdownItem}
+              placeholderStyle={styles.dropdownPlaceholder}
+              zIndex={2000}
+            />
           </View>
         )}
       </View>
@@ -188,21 +192,21 @@ export default function ActBatterScreen() {
           <ActivityIndicator />
         ) : (
           <View style={styles.dropdownContainer}>
-          <DropDownPicker
-            open={openGames}
-            value={selectedGame}
-            items={games}
-            setOpen={setOpenGames}
-            setValue={setSelectedGame}
-            setItems={setGames}
-            placeholder="Selecciona un juego"
-            disabled={!selectedSeason}
-            style={styles.dropdown}
-            dropDownContainerStyle={styles.dropdownList}
-            listItemLabelStyle={styles.dropdownItem}
-            placeholderStyle={styles.dropdownPlaceholder}
-            zIndex={1000}
-          />
+            <DropDownPicker
+              open={openGames}
+              value={selectedGame}
+              items={games}
+              setOpen={setOpenGames}
+              setValue={setSelectedGame}
+              setItems={setGames}
+              placeholder="Selecciona un juego"
+              disabled={!selectedSeason}
+              style={styles.dropdown}
+              dropDownContainerStyle={styles.dropdownList}
+              listItemLabelStyle={styles.dropdownItem}
+              placeholderStyle={styles.dropdownPlaceholder}
+              zIndex={1000}
+            />
           </View>
         )}
       </View>
@@ -224,8 +228,13 @@ export default function ActBatterScreen() {
       {/* Botón Registrar Actuación */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.button, styles.buttonGreen]}
+          style={[
+            styles.button,
+            styles.buttonGreen,
+            (hasOffensiveData && !isAdmin) && { opacity: 0.5 }
+          ]}
           onPress={handleRegister}
+          disabled={hasOffensiveData && !isAdmin}
         >
           <Text style={styles.buttonText}>Registrar Actuación</Text>
         </TouchableOpacity>
