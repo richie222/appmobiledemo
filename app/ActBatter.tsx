@@ -17,6 +17,11 @@ export default function ActBatterScreen() {
   const superuser = user?.superuser;
   const isAdmin = rol === 'A' || superuser === 'S';
 
+  // Dropdown Bateadores (solo para admin)
+  const [openPlayers, setOpenPlayers] = useState(false);
+  const [players, setPlayers] = useState<Array<{ label: string; value: number }>>([]);
+  const [selectedPlayer, setSelectedPlayer] = useState<number | null>(null);
+
   // Dropdown Temporadas
   const [openSeasons, setOpenSeasons] = useState(false);
   const [seasons, setSeasons] = useState<Array<{ label: string; value: number }>>([]);
@@ -27,6 +32,7 @@ export default function ActBatterScreen() {
   const [games, setGames] = useState<Array<{ label: string; value: number }>>([]);
   const [selectedGame, setSelectedGame] = useState<number | null>(null);
 
+  const [loadingPlayers, setLoadingPlayers] = useState(false);
   const [loadingSeasons, setLoadingSeasons] = useState(true);
   const [loadingGames, setLoadingGames] = useState(false);
 
@@ -34,8 +40,34 @@ export default function ActBatterScreen() {
   const [offensiveData, setOffensiveData] = useState<any>(null);
   const [loadingOffensive, setLoadingOffensive] = useState(false);
 
+  const [offensiveDataParams, setOffensiveDataParams] = useState<any>(null);
+
   // Estado para saber si ya hay datos ofensivos
   const [hasOffensiveData, setHasOffensiveData] = useState(false);
+
+  // Cargar bateadores solo si es admin
+  useEffect(() => {
+    if (!isAdmin) return;
+    
+    const fetchPlayers = async () => {
+      setLoadingPlayers(true);
+      try {
+        const res = await fetch(LIST_PLAYERS_URL);
+        const data = await res.json();
+        const playerItems = data.users.map((player: { id: number; username: string }) => ({
+          label: player.username,
+          value: player.id,
+        }));
+
+        setPlayers(playerItems);
+      } catch (e) {
+        Alert.alert('Error', 'No se pudieron cargar los bateadores');
+      } finally {
+        setLoadingPlayers(false);
+      }
+    };
+    fetchPlayers();
+  }, [isAdmin]);
 
   // Cargar temporadas al montar
   useEffect(() => {
@@ -98,7 +130,16 @@ export default function ActBatterScreen() {
   // Cargar datos ofensivos cuando se selecciona un juego
   useEffect(() => {
     const fetchOffensiveData = async () => {
-      if (!selectedSeason || !selectedGame || !user?.id) {
+      // Determinar qué jugador usar: el seleccionado (si es admin) o el usuario actual
+      let currentPlayerId: number | null = null;
+      if (isAdmin) {
+        // Si es admin, solo consultar si seleccionó un bateador
+        currentPlayerId = selectedPlayer ? Number(selectedPlayer) : null;
+      } else {
+        // Si no es admin, siempre el usuario autenticado
+        currentPlayerId = user?.id ?? null;
+      }
+      if (!selectedSeason || !selectedGame || !currentPlayerId) {
         setOffensiveData(null);
         setHasOffensiveData(false);
         return;
@@ -106,10 +147,11 @@ export default function ActBatterScreen() {
       setLoadingOffensive(true);
       setOffensiveData(null);
       try {
-        const url = `${STATS_PLAYER_URL}?id_season=${selectedSeason}&id_game=${selectedGame}&id_player=${user.id}`;
+        const url = `${STATS_PLAYER_URL}?id_season=${selectedSeason}&id_game=${selectedGame}&id_player=${currentPlayerId}`;
         const res = await fetch(url);
         if (!res.ok) throw new Error('No se encontró información');
         const data = await res.json();
+
         let offensiveStats = {};
         if (data.count === 0) {
           offensiveStats = { Mensaje: 'No hay datos ofensivos disponibles' };
@@ -117,6 +159,7 @@ export default function ActBatterScreen() {
         } else {
           const objdata = data.data[0];
           offensiveStats = {
+            id_rec: objdata.id,
             VB: objdata.vb,
             H: objdata.hit,
             "2B": objdata['2b'],
@@ -126,39 +169,77 @@ export default function ActBatterScreen() {
             K: objdata.kk,
           };
           setHasOffensiveData(true);
+
         }
-        setOffensiveData(offensiveStats);
+
+            // Eliminar la llave id_rec antes de setear el estado
+            const { id_rec, ...offensiveStatsWithoutIdRec } = offensiveStats as any;
+            setOffensiveData(offensiveStatsWithoutIdRec);
+
+          setOffensiveDataParams(offensiveStats);
+
       } catch (e) {
-        setOffensiveData(null);
+        setOffensiveData({ Mensaje: 'No hay datos ofensivos disponibles' });
         setHasOffensiveData(false);
       } finally {
         setLoadingOffensive(false);
       }
     };
     fetchOffensiveData();
-  }, [selectedGame, selectedSeason, user?.id]);
-
-  const handleCancel = () => {
-    router.dismissTo('/');
-  };
+  }, [selectedGame, selectedSeason, selectedPlayer, user?.id, isAdmin]);
 
   const handleRegister = () => {
     const selectedSeasonLabel = seasons.find(s => s.value === selectedSeason)?.label;
     const selectedGameLabel = games.find(g => g.value === selectedGame)?.label;
+    const selectedPlayerId = isAdmin ? players.find(g => g.value === selectedPlayer)?.value : user?.id;
+
     router.push({ 
       pathname: '/registerActBatter', 
       params: { 
         id_season: selectedSeason, 
         id_game: selectedGame,
         season_label: selectedSeasonLabel,
-        game_label: selectedGameLabel
+        game_label: selectedGameLabel,
+        selectedPlayerId: selectedPlayerId,
+        datos_off: JSON.stringify(offensiveDataParams)
       } 
     });
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Jugador: {user?.username}</Text>
+      {!isAdmin && (
+        <Text style={styles.title}>
+          Jugador:  {user?.username}
+        </Text>
+      )}
+
+      {/* Dropdown de Bateadores (solo para admin) */}
+      {isAdmin && (
+        <View style={{ zIndex: 3, width: '100%', marginBottom: 20 }}>
+          <Text style={styles.label}>Bateador</Text>
+          {loadingPlayers ? (
+            <ActivityIndicator />
+          ) : (
+            <View style={styles.dropdownContainer}>
+              <DropDownPicker
+                open={openPlayers}
+                value={selectedPlayer}
+                items={players}
+                setOpen={setOpenPlayers}
+                setValue={setSelectedPlayer}
+                setItems={setPlayers}
+                placeholder="Selecciona un Bateador"
+                style={styles.dropdown}
+                dropDownContainerStyle={styles.dropdownList}
+                listItemLabelStyle={styles.dropdownItem}
+                placeholderStyle={styles.dropdownPlaceholder}
+                zIndex={3000}
+              />
+            </View>
+          )}
+        </View>
+      )}
 
       {/* Dropdown de Temporadas */}
       <View style={{ zIndex: 2, width: '100%', marginBottom: 20 }}>
@@ -236,7 +317,9 @@ export default function ActBatterScreen() {
           onPress={handleRegister}
           disabled={hasOffensiveData && !isAdmin}
         >
-          <Text style={styles.buttonText}>Registrar Actuación</Text>
+            <Text style={styles.buttonText}>
+              Actualizar actuación
+            </Text>
         </TouchableOpacity>
       </View>
     </View>

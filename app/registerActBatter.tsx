@@ -10,23 +10,28 @@ export default function RegisterActBatterScreen() {
   useAuthGuard();
   const router = useRouter();
   const { user, token } = useAuth();
-  const { id_season, id_game, season_label, game_label } = useLocalSearchParams();
+  const { id_season, id_game, season_label, game_label, selectedPlayerId, datos_off } = useLocalSearchParams();
 
-  // Estados para los campos de datos ofensivos
-  const [vb, setVb] = useState(0);
-  const [hit, setHit] = useState(0);
-  const [doubles, setDoubles] = useState(0);
-  const [triples, setTriples] = useState(0);
-  const [hr, setHr] = useState(0);
-  const [bb, setBb] = useState(0);
-  const [kk, setKk] = useState(0);
+  const datosParsed = datos_off ? (typeof datos_off === 'string' ? JSON.parse(datos_off) : datos_off) : null;
+
+  // Detectar si es actualización o registro nuevo
+  const isUpdate = !!datosParsed && (datosParsed.VB !== undefined || datosParsed.Mensaje === undefined);
+
+  // Estados para los campos de datos ofensivos (inicializados con datos existentes si los hay)
+  const [vb, setVb] = useState(datosParsed?.VB ?? 0);
+  const [hit, setHit] = useState(datosParsed?.H ?? 0);
+  const [doubles, setDoubles] = useState(datosParsed?.['2B'] ?? 0);
+  const [triples, setTriples] = useState(datosParsed?.['3B'] ?? 0);
+  const [hr, setHr] = useState(datosParsed?.HR ?? 0);
+  const [bb, setBb] = useState(datosParsed?.BB ?? 0);
+  const [kk, setKk] = useState(datosParsed?.K ?? 0);
 
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = () => {
     Alert.alert(
       'Confirmar',
-      '¿Está seguro de guardar esta ofensiva?',
+      isUpdate ? '¿Está seguro de actualizar esta ofensiva?' : '¿Está seguro de guardar esta ofensiva?',
       [
         {
           text: 'No',
@@ -52,41 +57,57 @@ export default function RegisterActBatterScreen() {
       const offensiveData = {
         id_season: Number(id_season),
         id_game: Number(id_game),
-        id_player: user.id,
-        vb,
-        hit,
+        id_player: Number(selectedPlayerId),
+        vb:vb,
+        hit: hit,
         "2b": doubles,
         "3b": triples,
-        hr,
-        bb,
-        kk
+        hr: hr,
+        bb: bb,
+        kk: kk
       };
 
-      const response = await fetch(STATS_PLAYER_URL, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(offensiveData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al enviar los datos');
+      let response;
+      if (isUpdate) {
+        // Actualizar (PUT)
+        response = await fetch(`${STATS_PLAYER_URL}/${datosParsed.id_rec}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(offensiveData),
+        });
+      } else {
+        // Crear nuevo (POST)
+        response = await fetch(STATS_PLAYER_URL, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(offensiveData),
+        });
       }
 
-      Alert.alert('Éxito', 'Datos ofensivos registrados correctamente', [
-        { text: 'OK', onPress: () => router.replace('/ActBatter') }
-      ]);
+      if (!response.ok) {
+      const errorData = await response.text();
+      console.error('Error del servidor:', errorData);
+        throw new Error(isUpdate ? 'Error al actualiazar los datos' : 'Error al registrar los datos');
+      }
+
+      Alert.alert(
+        'Éxito', 
+        isUpdate ? 'Datos ofensivos actualizados correctamente' : 'Datos ofensivos registrados correctamente', 
+        [
+          { text: 'OK', onPress: () => router.replace('/ActBatter') }
+        ]
+      );
     } catch (error) {
       Alert.alert('Error', 'No se pudieron guardar los datos: ' + error);
     } finally {
       setSubmitting(false);
     }
-  };
-
-  const handleCancel = () => {
-    router.dismissTo('/ActBatter');
   };
 
   // Componente reutilizable para cada campo numérico
@@ -120,7 +141,9 @@ export default function RegisterActBatterScreen() {
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
-        <Text style={styles.title}>Registrar Actuación Ofensiva</Text>
+        <Text style={styles.title}>
+          {isUpdate ? 'Actualizar Actuación Ofensiva' : 'Registrar Actuación Ofensiva'}
+        </Text>
 
         {/* Mostrar Torneo y Juego como texto */}
         <View style={styles.inputContainer}>
@@ -136,7 +159,7 @@ export default function RegisterActBatterScreen() {
         {/* Campos de datos ofensivos */}
         <View style={styles.statsContainer}>
           <Text style={styles.statsTitle}>Estadísticas Ofensivas</Text>
-          <Counter label="Veces al Bate (VB)" value={vb} setValue={setVb}/>
+          <Counter label="Veces al Bate (VB)" value={vb} setValue={setVb} />
           <Counter label="Hits (H)" value={hit} setValue={setHit} />
           <Counter label="Dobles (2B)" value={doubles} setValue={setDoubles} />
           <Counter label="Triples (3B)" value={triples} setValue={setTriples} />
@@ -152,7 +175,10 @@ export default function RegisterActBatterScreen() {
             disabled={submitting}
           >
             <Text style={styles.buttonText}>
-              {submitting ? 'Guardando...' : 'Guardar'}
+              {submitting 
+                ? (isUpdate ? 'Actualizando...' : 'Guardando...') 
+                : (isUpdate ? 'Actualizar' : 'Guardar')
+              }
             </Text>
           </TouchableOpacity>
         </View>
@@ -160,4 +186,3 @@ export default function RegisterActBatterScreen() {
     </ScrollView>
   );
 }
-
