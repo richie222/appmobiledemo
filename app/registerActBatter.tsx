@@ -100,7 +100,7 @@ export default function RegisterActBatterScreen() {
         'Éxito', 
         isUpdate ? 'Datos ofensivos actualizados correctamente' : 'Datos ofensivos registrados correctamente', 
         [
-          { text: 'OK', onPress: () => router.replace('/ActBatter') }
+          { text: 'OK', onPress: () => router.dismissTo('/ActBatter') }
         ]
       );
     } catch (error) {

@@ -175,7 +175,7 @@ export default function NewGameScreen() {
         [
           { 
             text: 'OK', 
-            onPress: () => router.push('/registerGame')
+            onPress: () => router.dismissTo('/registerGame')
           }
         ]
       );
