@@ -228,7 +228,7 @@ export default function NewGameScreen() {
                   value={selectedSeasonId}
                   items={seasons}
                   setOpen={setOpenSeasons}
-                  setValue={setSelectedSeasonId}
+                  setValue={val => setSelectedSeasonId(val)}
                   setItems={setSeasons}
                   placeholder="Seleccione un torneo"
                   style={styles.dropdown}
