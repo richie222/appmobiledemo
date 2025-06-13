@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "softballbogota",
+    "name": "Toros SoftBall Team",
     "slug": "softballbogota",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/emoji3.png",
+    "icon": "./assets/images/TorosTeam.jpeg",
     "scheme": "softballbogota",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
