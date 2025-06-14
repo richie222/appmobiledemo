@@ -8,7 +8,7 @@ import styles from './styles';
 
 const Home = () => {
   const router = useRouter();
-  const { logout, isLoggedIn, rol, superuser } = useAuth();
+  const { logout, isLoggedIn, rol, superuser, user} = useAuth();
 
   const goToLogin = () => {
     router.push('/login');
@@ -55,6 +55,9 @@ return (
 
     {isLoggedIn && (
       <>
+        <View style={{ backgroundColor: 'black', marginTop: 20 }}>
+            <Text style={styles.title}>Bienvenido: {user?.username}</Text>
+        </View>
         {isAdmin ? (
           <>
             <TouchableOpacity style={[styles.buttonHome, styles.buttonGreen]} onPress={goToRegisterBatter}>

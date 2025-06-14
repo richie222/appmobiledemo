@@ -1,5 +1,7 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
  
 const colorBlack = '#000000';
 const colorWhite = '#FFFFFF';
@@ -17,7 +19,20 @@ const styles = StyleSheet.create({
   buttonContainerHome: {
     width: '80%',
     alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 'auto',
+    marginBottom: 'auto',
+    backgroundColor: 'black',
   },
+
+  /*
+style={{
+        backgroundColor: 'black',
+        alignItems: 'center',
+        marginTop: 20,
+        marginBottom: 20,
+      }}
+  */
   buttonHome: {
     width: '100%',
     paddingVertical: 14,
@@ -39,7 +54,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   containerIndex: {
-    paddingTop: 50,
+    paddingTop: 100,
+    paddingBottom: 20,
     flex: 1,
     alignItems: 'center',
     backgroundColor: colorBlack,
@@ -56,7 +72,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 48,
+    marginTop: 20,
+    marginBottom: 20,
     textAlign: 'center',
     color: colorWhite,
   },
